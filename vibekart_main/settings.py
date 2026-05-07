@@ -25,7 +25,11 @@ SECRET_KEY = 'django-insecure-!b&(r_nzdt(7fg+-#%rvmkim&zgy=wzbhqrj&7ct5ou#qi_y$t
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "carpool-deprive-pajamas.ngrok-free.dev",
+    "127.0.0.1",
+    "localhost",
+]
 
 
 # Application definition
@@ -42,6 +46,7 @@ INSTALLED_APPS = [
     'store',
     'rest_framework',
     'carts',
+    'orders',
 ]
 
 MIDDLEWARE = [
@@ -160,3 +165,8 @@ EMAIL_HOST_PASSWORD = 'glqzhuevkoaexegg'  # ✅ no spaces
 EMAIL_USE_TLS = True
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://carpool-deprive-pajamas.ngrok-free.dev',
+]
