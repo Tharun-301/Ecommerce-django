@@ -25,11 +25,7 @@ SECRET_KEY = 'django-insecure-!b&(r_nzdt(7fg+-#%rvmkim&zgy=wzbhqrj&7ct5ou#qi_y$t
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    "carpool-deprive-pajamas.ngrok-free.dev",
-    "127.0.0.1",
-    "localhost",
-]
+ALLOWED_HOSTS = [ ]
 
 
 # Application definition
@@ -57,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+  
 ]
 
 ROOT_URLCONF = 'vibekart_main.urls'
@@ -167,6 +164,3 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
-CSRF_TRUSTED_ORIGINS = [
-    'https://carpool-deprive-pajamas.ngrok-free.dev',
-]
