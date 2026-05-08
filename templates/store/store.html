@@ -53,7 +53,7 @@
 				<h6 class="title">Sizes </h6>
 			</a>
 		</header>
-		<div class="filter-content collapse show" id="collapse_4" style="">
+		<div class="filter-content collapse show" id="collapse_4">
 			<div class="card-body">
 			  <label class="checkbox-btn">
 			    <input type="checkbox">
@@ -150,6 +150,10 @@
 					</div> <!-- price-wrap.// -->
 				</div>
 				<a href="{{ product.get_url }}" class="btn btn-block btn-primary">View Detaila</a>
+				<a href="{% url 'add_to_wishlist' product.id %}" 
+				class="btn btn-block btn-outline-danger mt-2">
+					 Add to Wishlist
+			</a>
 			</figcaption>
 		</figure>
 	</div> <!-- col.// -->

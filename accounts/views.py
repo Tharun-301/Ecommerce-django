@@ -1,20 +1,23 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 
-from carts.models import Cart, CartItem
-from carts.views import _cart_id
-from .forms import RegistrationForm
-from .models import Account
+from store.models import Product
+from .forms import RegistrationForm, UserForm, UserProfileForm
+from .models import Account, UserProfile, Wishlist
+from orders.models import Order, OrderProduct
 from django.contrib import messages, auth
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 
-
+# Verification email
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
-from django.core.mail import EmailMessage, send_mail
-from django.conf import settings
+from django.core.mail import EmailMessage
+
+from carts.views import _cart_id
+from carts.models import Cart, CartItem
 import requests
 
 
@@ -164,7 +167,15 @@ def activate(request, uidb64, token):
     
 @login_required(login_url = 'login')
 def dashboard(request):
-    return render(request, 'accounts/dashboard.html')  
+    wishlist_count = Wishlist.objects.filter(user=request.user).count()
+
+    userprofile, created = UserProfile.objects.get_or_create(user=request.user)
+
+    context = {
+        'wishlist_count': wishlist_count,
+        'userprofile': userprofile,
+    }
+    return render(request, 'accounts/dashboard.html', context)  
 
 
 def forgotPassword(request):
@@ -225,4 +236,88 @@ def resetPassword(request):
             messages.error(request, 'Password do not match!')
             return redirect('resetPassword')
     else:
-        return render(request, 'accounts/resetPassword.html')    
+        return render(request, 'accounts/resetPassword.html')
+
+
+@login_required(login_url='login')
+def wishlist(request):
+    wishlist_items = Wishlist.objects.filter(user=request.user)
+
+    context = {
+        'wishlist_items': wishlist_items,
+    }
+    return render(request, 'accounts/wishlist.html', context)
+
+
+@login_required(login_url='login')
+def add_to_wishlist(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+
+    Wishlist.objects.get_or_create(
+        user=request.user,
+        product=product
+    )
+
+    messages.success(request, 'Product added to wishlist.')
+    return redirect('wishlist')
+
+
+@login_required(login_url='login')
+def remove_from_wishlist(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+
+    Wishlist.objects.filter(
+        user=request.user,
+        product=product
+    ).delete()
+
+    messages.success(request, 'Product removed from wishlist.')
+    return redirect('wishlist')
+
+
+
+@login_required(login_url='login')
+def edit_profile(request):
+    userprofile, created = UserProfile.objects.get_or_create(user=request.user)
+    if request.method == 'POST':
+        user_form = UserForm(request.POST, instance=request.user)
+        profile_form = UserProfileForm(request.POST, request.FILES, instance=userprofile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request, 'Your profile has been updated.')
+            return redirect('edit_profile')
+    else:
+        user_form = UserForm(instance=request.user)
+        profile_form = UserProfileForm(instance=userprofile)
+    context = {
+        'user_form': user_form,
+        'profile_form': profile_form,
+        'userprofile': userprofile,
+    }
+    return render(request, 'accounts/edit_profile.html', context)     
+
+@login_required(login_url='login')
+def change_password(request):
+    if request.method == 'POST':
+        current_password = request.POST['current_password']
+        new_password = request.POST['new_password']
+        confirm_password = request.POST['confirm_password']
+
+        user = Account.objects.get(username__exact=request.user.username)
+
+        if new_password == confirm_password:
+            success = user.check_password(current_password)
+            if success:
+                user.set_password(new_password)
+                user.save()
+                # auth.logout(request)
+                messages.success(request, 'Password updated successfully.')
+                return redirect('change_password')
+            else:
+                messages.error(request, 'Please enter valid current password')
+                return redirect('change_password')
+        else:
+            messages.error(request, 'Password does not match!')
+            return redirect('change_password')
+    return render(request, 'accounts/change_password.html')   
