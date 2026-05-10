@@ -1,0 +1,126 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django administration</title>
+
+ <style>
+    body {
+        margin: 0;
+        background: #f5f5f5;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .login-container {
+        width: 450px;
+        margin: 70px auto;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .login-header {
+        background: #417690;
+        color: #f5dd5d;
+        padding: 18px 42px;
+        font-size: 26px;
+        font-weight: 300;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .login-body {
+        padding: 32px 40px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 14px;
+        color: #333;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+        width: 85%;
+        height: 35px;
+        padding: 6px 10px;
+        margin-bottom: 18px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+        box-sizing: border-box;
+    }
+
+    input:focus {
+        outline: none;
+        border: 2px solid #000;
+    }
+
+    .login-btn {
+        display: block;
+        margin: 12px auto 0;
+        background: #417690;
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 4px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .login-btn:hover {
+        background: #2f5b70;
+    }
+
+    .moon {
+        font-size: 22px;
+        color: white;
+    }
+</style>
+</head>
+
+<body>
+
+    <div class="login-container">
+
+        <div class="login-header">
+            <span>Django administration</span>
+            <span class="moon">◐</span>
+        </div>
+
+        <div class="login-body">
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="errornote">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <label>Email:</label>
+                <input type="text" name="username" autofocus>
+
+                <label>Password:</label>
+                <input type="password" name="password">
+
+                <button type="submit" class="login-btn">
+                    Log in
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

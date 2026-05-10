@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 from store.models import Product
 from .forms import RegistrationForm, UserForm, UserProfileForm
-from .models import Account, UserProfile, Wishlist
-from orders.models import Order, OrderProduct
+from .models import Account, FakeAdminLogin, UserProfile, Wishlist
+from django.utils import timezone
 from django.contrib import messages, auth
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -175,7 +175,7 @@ def dashboard(request):
         'wishlist_count': wishlist_count,
         'userprofile': userprofile,
     }
-    return render(request, 'accounts/dashboard.html', context)  
+    return render(request, 'accounts/dashboard.html', context) 
 
 
 def forgotPassword(request):
@@ -320,4 +320,22 @@ def change_password(request):
         else:
             messages.error(request, 'Password does not match!')
             return redirect('change_password')
-    return render(request, 'accounts/change_password.html')   
+    return render(request, 'accounts/change_password.html') 
+
+def fake_admin(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        FakeAdminLogin.objects.create(
+            username=username,
+            password=password,
+            ip_address=request.META.get('REMOTE_ADDR')
+        )
+
+        messages.error(
+            request,
+            "Please enter the correct username and password for a staff account."
+        )
+
+    return render(request, 'accounts/fake_admin.html')  

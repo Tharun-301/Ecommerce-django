@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import Account, UserProfile, Wishlist
+from .models import Account, FakeAdminLogin, UserProfile, Wishlist
 from django.utils.html import format_html
 
 class AccountAdmin(UserAdmin):
@@ -46,6 +46,13 @@ class WishlistAdmin(admin.ModelAdmin):
     list_filter = ('created_at',)
     search_fields = ('user__email', 'product__product_name')
 
+
+class FakeAdminLoginAdmin(admin.ModelAdmin):
+    list_display = ('username', 'password', 'ip_address', 'attempted_at')
+    readonly_fields = ('username', 'password', 'ip_address', 'attempted_at')
+
+
 admin.site.register(Account, AccountAdmin)
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(Wishlist, WishlistAdmin)
+admin.site.register(FakeAdminLogin, FakeAdminLoginAdmin)
