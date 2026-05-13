@@ -1,0 +1,7 @@
+media/
+staticfiles/
+.elasticbeanstalk/logs/
+env/
+__pycache__/
+*.pyc
+.git/
